@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "robotregistryfoundation",
-  "description": "Plugins for the robot-md ecosystem — declare robots with ROBOT.md, expose them safely to agents.",
+  "description": "Plugins for the robot-md ecosystem and adjacent developer tooling — declare robots with ROBOT.md, visualize project workflows, and expose work safely to agents.",
   "owner": {
     "name": "Robot Registry Foundation",
     "email": "craigm26@gmail.com"
@@ -16,6 +16,19 @@
         "url": "https://github.com/RobotRegistryFoundation/robot-md-mcp.git"
       },
       "homepage": "https://robotmd.dev"
+    },
+    {
+      "name": "workflow-atlas",
+      "description": "JSON-driven workflow visualization for any project. Scaffolds a single-page HTML atlas with Atlas (Cytoscape graph), Sprint Log (auto-generated from git + Claude session activity with token totals), and Forecast (Chart.js burn-down + predicted-spend). Slash commands: init, refresh, open, add-flow. Hostable view-only web mode for sharing.",
+      "author": {
+        "name": "craigm26"
+      },
+      "category": "development",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/craigm26/workflow-atlas.git"
+      },
+      "homepage": "https://github.com/craigm26/workflow-atlas"
     }
   ]
 }
