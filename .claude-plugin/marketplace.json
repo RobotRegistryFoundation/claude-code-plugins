@@ -57,6 +57,34 @@
         "path": "plugins/build-options"
       },
       "homepage": "https://github.com/craigm26/founder-skills"
+    },
+    {
+      "name": "prd",
+      "description": "Generate a Product Requirements Document for a new feature: self-clarify the open questions, then produce a clear, actionable, implementation-ready PRD. Chains after build-options and into tasks. Cross-listed from the founder-skills marketplace.",
+      "author": {
+        "name": "craigm26"
+      },
+      "category": "productivity",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/craigm26/founder-skills.git",
+        "path": "plugins/prd"
+      },
+      "homepage": "https://github.com/craigm26/founder-skills"
+    },
+    {
+      "name": "tasks",
+      "description": "Convert a PRD markdown file into a prd.json task plan: extract tasks and explode each into granular, machine-verifiable sub-tasks with acceptance criteria. Chains after prd. Cross-listed from the founder-skills marketplace.",
+      "author": {
+        "name": "craigm26"
+      },
+      "category": "productivity",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/craigm26/founder-skills.git",
+        "path": "plugins/tasks"
+      },
+      "homepage": "https://github.com/craigm26/founder-skills"
     }
   ]
 }
