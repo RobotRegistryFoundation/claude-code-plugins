@@ -18,19 +18,6 @@
       "homepage": "https://robotmd.dev"
     },
     {
-      "name": "workflow-atlas",
-      "description": "JSON-driven workflow visualization for any project. Scaffolds a single-page HTML atlas with Atlas (Cytoscape graph), Sprint Log (auto-generated from git + Claude session activity with token totals), and Forecast (Chart.js burn-down + predicted-spend). Slash commands: init, refresh, open, add-flow. Hostable view-only web mode for sharing.",
-      "author": {
-        "name": "craigm26"
-      },
-      "category": "development",
-      "source": {
-        "source": "url",
-        "url": "https://github.com/craigm26/workflow-atlas.git"
-      },
-      "homepage": "https://github.com/craigm26/workflow-atlas"
-    },
-    {
       "name": "market-validation",
       "description": "Validate whether there is a real market for a product idea: multi-angle web research with live-URL verification → cited evidence pack → Tufte HTML deck + PDF/PPTX → a build/integrate brief and an emitted workflow-atlas market map. Cross-listed from the founder-skills marketplace.",
       "author": {
