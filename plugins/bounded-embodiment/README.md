@@ -7,7 +7,10 @@ move physical hardware, or is asked to test a robot's limits, the skill holds it
 2. The integrator owns the envelope (workspace, speed and stop limits), and whether the limits are
    adequate is the integrator's call.
 3. Everything is rehearsed in simulation first, and a simulation proves nothing.
-4. Claude never starts motion on real hardware. It prepares the exact commands, and a person at the
+4. Claude never starts motion on real hardware, by any route. That includes scripts and test suites,
+   the kit, and MCP or API tools, a project's own gated motion tools such as robot-md's
+   `execute_capability` included. It may use read-only tools and an e-stop, but it never calls a
+   motion tool or clears an e-stop. It prepares the exact commands or tool calls, and a person at the
    machine runs them with a hand on the hardware stop.
 
 It works with the [Bounded Embodiment](https://github.com/RobotRegistryFoundation/bounded-embodiment)
@@ -46,7 +49,8 @@ test method and its reference bench, `bounded-embodiment-kit`.
 - Simulated runs (`be run` with `sim-so101` or `sim-rover`), packaged as rehearsals with `be report`
   and checked with `be verify`. Every result is read honestly: a simulation is always INCONCLUSIVE,
   and "consistent" is not "passed".
-- For a real machine, the exact `be goto-start` and `be run` commands, as text for you to run.
+- For a real machine, the exact `be goto-start` and `be run` commands, or MCP tool calls, as text
+  for you to run.
 - Answers about Anthropic's Usage Policy hardware requirements (effective 12 November 2026) that say
   what EV-03 is evidence of and what it isn't. It never says anything is "compliant".
 

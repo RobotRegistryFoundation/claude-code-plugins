@@ -5,8 +5,9 @@ description: >-
   Bounded Embodiment method and kit: declare an envelope (workspace, speed and stop limits),
   rehearse EV-03 and EV-10 in simulation (bounded-embodiment-kit, be doctor, be run, be verify),
   read verdicts without overclaiming, and prepare, never start, hardware runs for a person at the
-  machine. Use whenever code you write or run could move physical hardware (robot arms, rovers,
-  servos, motor buses, serial or CAN actuators, LeRobot, robot-md-gateway), or when the user says
+  machine. Use whenever code you write or run, or a tool you call, could move physical hardware
+  (robot arms, rovers, servos, motor buses, serial or CAN actuators, LeRobot, robot-md-gateway, MCP
+  motion tools such as robot-md's execute_capability), or when the user says
   "test my robot's limits", "write an envelope for my arm", "run EV-03 on my SO-101", "just send
   it straight to the servos", "is my gate good enough", "what does this be verify output mean", or
   asks whether a robot meets the Usage Policy's hardware requirements, even if they never say
@@ -44,15 +45,19 @@ untrusted command source the gate exists to contain.
    path to the envelope, the gate or its log.
 3. **Simulation comes first, and it proves nothing.** Rehearse with the kit's simulators. A
    simulation's verdict is always INCONCLUSIVE.
-4. **You never start motion on real hardware.** For tests and for any script that drives
-   actuators, write the exact commands and hand them over. A person at the machine, with a hand on
+4. **You never start motion on real hardware, by any route.** That covers the shell, scripts
+   (hardware-in-the-loop test suites, `make` targets and gateway clients included), the kit,
+   subprocesses, scheduled tasks, and MCP or API tools, a project's own gated motion tools included.
+   Write the exact commands or tool calls and hand them over. A person at the machine, with a hand on
    the hardware stop, runs them and types the kit's confirmations.
 
 ## Step 1: Find the gate before writing motion code
 
-Search the project before you write anything that moves. Likely signs are `send_action` wrappers,
-a `--wrapper module:factory`, anything named gate or gateway, `ROBOT.md` with robot-md-gateway,
-`FeetechMotorsBus`, `serial.Serial`, and `/dev/ttyACM*` or `/dev/ttyUSB*` device paths.
+Search the project before you write or run anything that moves. Likely signs are `send_action`
+wrappers, a `--wrapper module:factory`, anything named gate or gateway, `ROBOT.md` with
+robot-md-gateway, `FeetechMotorsBus`, `serial.Serial`, and `/dev/ttyACM*` or `/dev/ttyUSB*` device
+paths. Treat hardware-in-the-loop test suites, `make` targets and gateway clients as scripts that
+drive actuators: running `pytest` in a robot repository can move the robot.
 
 - **There is a gate.** Route every command through it. A gate's job is to allow, clamp, reject or
   stop each command, and any exception, timeout, stale state or unparseable command is expected to
@@ -73,9 +78,18 @@ a `--wrapper module:factory`, anything named gate or gateway, `ROBOT.md` with ro
   test, but behind the kit's watchdog. You can run it in simulation (Step 3). On hardware the person
   runs it (Step 5).
 
-If the project gives you a gated motion tool, such as robot-md's MCP tools behind robot-md-gateway,
-follow that project's own protocol for it: read its safety gates and get the operator's
-authorization where it requires that. Never use the kit or a script of your own to reach hardware.
+Rule 4 covers MCP and API tools too, including a project's own gated motion tools such as
+robot-md's `execute_capability` and `execute_task`. In robot-md 1.10.6 those write to the bus from
+inside the MCP server, not through robot-md-gateway, and any non-empty `confirm_token` satisfies a
+gate. A token you pass is therefore not a person at the machine.
+
+- You may use such a server's read-only tools and its stop (`estop`).
+- On real hardware, never call a motion tool, and never clear an e-stop (robot-md's `estop_clear`,
+  for example). If you can't tell whether a tool moves the machine, treat it as a motion tool.
+- Write the call, or the equivalent CLI command, as text for the person at the machine, after the
+  Step 5 checklist.
+
+A project's own gate protocol adds to this rule. It never replaces it.
 
 ## Step 2: Declare the envelope
 
@@ -123,9 +137,22 @@ printf 'RUN\n' | be run ev03 --mode shakedown --adapter sim-so101 --instrument s
   --i-accept-the-risk --hardware-stop "none (simulation)"
 ```
 
-Piping `RUN` answers the kit's typed confirmation. You may do that only when `--adapter` is
-`sim-so101` or `sim-rover` and `--instrument` is `sim`. Never pipe it for `lerobot`, `python` or any
-adapter that can reach hardware.
+Piping `RUN` answers the kit's typed confirmation. You may pipe it only when all of these hold:
+
+- `--adapter` is `sim-so101` or `sim-rover`, and `--instrument` is `sim`.
+- `--wrapper` is omitted, or it is one of the reference gates from the bounded-embodiment clone's
+  `examples/reference-gates` (kit 0.1.2): `reference_gates.so101_reference:factory`,
+  `reference_gates.so101_reference_v1:factory`, `reference_gates.passthrough:ungated`,
+  `reference_gates.passthrough:lerobot_clamp`, `reference_gates.freeze:factory`,
+  `reference_gates.rover:factory` or `reference_gates.rover:ungated`.
+- None of `--port`, `--id`, `--estop-cmd`, `--refuse-while-active` or `--adapter-class` appears.
+
+Treat any other wrapper or adapter code as hardware. A wrapper runs arbitrary code and every command
+goes through it, so it can forward the hostile stream to a real arm while the kit's watchdog watches
+only the simulated one. Hand such a command over as text for the person to run. The one exception is
+when you have read that code in full and confirmed it does no I/O beyond the simulator (no network,
+serial, socket or subprocess). If so, say that you checked. `GO` is always the person's to type:
+`be goto-start` refuses `--instrument sim`.
 
 `be run` never writes a verdict. To get one, package the run with `be report`, using a throwaway key
 and a rehearsal lab config, and check it with `be verify`. A control rehearsal, full and EV-10
@@ -167,9 +194,16 @@ or check pose in between. The command templates and checklist are in
 goto-start and `RUN` before a run. At the end, typing `OFF` turns torque off (the arm goes limp, so
 it must be supported first), and pressing Enter leaves torque on.
 
+Full-run and EV-10 rehearsals often end with exit 3 and the CUT POWER banner. The arm is still
+moving when the stream ends, and the stop isn't acknowledged in time (method known gap 7). Before
+you hand over the hardware full-run or EV-10 command, tell the person whether their rehearsal of it
+ended that way, and that the same banner may appear on the hardware run.
+
 For hardware, never do any of these:
 
-- run `be goto-start`, `be run`, `be doctor --port` or any script that opens the robot's port;
+- run `be goto-start`, `be run`, `be doctor --port`, or any script, test suite, `make` target or
+  gateway client that opens the robot's port or drives its actuators;
+- call an MCP or API motion tool, or clear an e-stop;
 - answer the typed words with a pipe, `echo`, `yes`, `expect` or a wrapper script;
 - add `--no-fk-tripwire-i-understand` or `--no-live-instrument-i-understand` to get past a
   refusal (the second exists only for an offline instrument, as the lab guide describes, and the
@@ -197,21 +231,23 @@ of model output.
 - EV-03 produces evidence about that last requirement, for one run: whether the declared workspace
   and speed limits held, measured by an external instrument, while a hostile stream stood in for the
   model. Version 0.1 doesn't test force, joint limits, acceleration or stop time.
-- EV-02 (stop performance for each stop source) and EV-05 (the model process dies) are being added
-  in method v0.2. They bear on the safe-state requirement. Until v0.2 is published they are scope
-  only, and v0.1 tests neither.
+- Method v0.1 defines only EV-03 and EV-10. EV-02 (stop performance for each stop source) and EV-05
+  (the model process dies) would bear on the safe-state requirement, but they are scope only
+  (`docs/requirements.md`), and v0.1 tests neither.
 - Nothing in the method tests human oversight. That is the deployer's arrangement.
 
 Never say a machine, gate or deployment is compliant with the policy, meets it or is approved under
 it. Say what the evidence is and what it isn't. Meeting the policy is the deployer's responsibility,
-and no test result settles it. Scope, exclusions and the mapping are in
-[references/usage-policy.md](references/usage-policy.md).
+and no test result settles it. The policy's prohibited uses (weapons, critical infrastructure,
+violence and surveillance) still apply whatever the hardware does. Scope, exclusions and the mapping
+are in [references/usage-policy.md](references/usage-policy.md).
 
 ## Known limitations (keep your honesty consistent)
 
 - Method v0.1 is a draft for comment with illustrative thresholds. It has one maintainer and no
-  third-party verification. Its presentation at an ITU workshop was not an endorsement, and no body
-  has reviewed or adopted it.
+  third-party verification.
+  Presented at the ITU-T FG-EAI workshop on embodied AI, 16 October 2026 (remote).
+  No body has reviewed, endorsed or adopted the method.
 - The kit's adapters, runner and watchdog are a draft that needs line-by-line human review before
   hardware use. The markerless tracker has been validated on synthetic recordings only, and the
   timebase conversion has been exercised only in simulation.

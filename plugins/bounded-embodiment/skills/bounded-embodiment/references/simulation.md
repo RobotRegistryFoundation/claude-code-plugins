@@ -2,8 +2,8 @@
 
 Everything on this page runs against the kit's simulators (`sim-so101`, `sim-rover`) and moves
 nothing physical. Each command was run with bounded-embodiment 0.1.1, bounded-embodiment-kit 0.1.2
-and Python 3.12 on 22 October 2026. A simulation is always a rehearsal: its verdict is INCONCLUSIVE
-by rule (method §10 item 7), and it is never evidence.
+and Python 3.12 on 22 October 2026. A simulation is always a rehearsal. Its verdict is INCONCLUSIVE
+by rule (method §7.9, step 1: `SIMULATION`), and it is never evidence (§10 item 7).
 
 ## Install
 
@@ -60,8 +60,32 @@ an unusable keyring.
 
 `be run` asks for a typed `RUN` and, at the end, offers `OFF`. In simulation, piping `printf 'RUN\n'`
 answers the first. The end of input then answers the second with "leave torque on", which the kit
-treats as the safe failure. Do this only with `--adapter sim-so101` or `--adapter sim-rover` and
-`--instrument sim`. Never do it with an adapter that can reach hardware.
+treats as the safe failure. Pipe it only when all of these hold:
+
+- `--adapter` is `sim-so101` or `sim-rover`, and `--instrument` is `sim`.
+- `--wrapper` is omitted, or it is one of the reference gates from this clone's
+  `examples/reference-gates`, installed with `pip install -e examples/reference-gates`. At the
+  `kit-v0.1.2` tag these are:
+  - `reference_gates.so101_reference:factory` and `reference_gates.so101_reference_v1:factory`;
+  - `reference_gates.passthrough:ungated` and `reference_gates.passthrough:lerobot_clamp`;
+  - `reference_gates.freeze:factory`;
+  - `reference_gates.rover:factory` and `reference_gates.rover:ungated`.
+
+  At that tag their imports are the standard library's `json`, `pathlib`, `math`, `time` and
+  `collections.abc`, plus numpy and the kit. None of them is a network, serial or subprocess module.
+  They read the envelope, kit config and URDF files, and act only on the robot object they are
+  handed.
+- None of `--port`, `--id`, `--estop-cmd`, `--refuse-while-active` or `--adapter-class` appears.
+  `--estop-cmd`, for example, runs a real program when a stop isn't acknowledged.
+
+Any other wrapper or adapter code counts as hardware. A wrapper is arbitrary code that every command
+goes through. In a test for this skill, a short wrapper passed to a `sim-so101` shakedown forwarded
+all 150 hostile commands to a local network listener, and the run exited 0. The kit's start check and
+watchdog watch only the simulated arm, so the same wrapper pointed at a gateway would drive a real arm
+with no supervision. Hand such a command to the person as text, unless you have read the code in full
+and confirmed that it does no I/O beyond the simulator (no network, serial, socket or subprocess). If
+so, say that you checked. `GO` is never piped: `be goto-start` refuses `--instrument sim`, so it
+never qualifies.
 
 Every simulated run below passes `--ledger runs/sim-ledger.jsonl`, which keeps rehearsals out of the
 default shakedown ledger (`~/.local/state/bounded-embodiment/shakedown-ledger.jsonl`). A simulated
@@ -201,25 +225,35 @@ run stopped early). Its `report.json` shows what the rehearsal saw under
 `POSITION_EXCURSION: tool: 31 sample(s) more than 0.0100 m outside its zones; worst 0.0223 m outside`.
 Report it as "in simulation, the ungated arm left its box and the setup saw it", not as a FAIL.
 
-## Real-time trips and exit 3 in simulation
+## Real-time trips before motion
 
 The runner runs in real time, so a busy computer shows up as trips. In the reference runs, with the
-machine loaded, these happened before any command was sent: `robot state is 0.34 s old (limit
-0.25 s)` and `instrument feed silent for 1.98 s (limit 0.5 s)`. A full run and an EV-10 run ended
-with this banner and exit 3:
+machine loaded (load average about 11 on 2 cores), these happened before any command was sent:
+`robot state is 0.34 s old (limit 0.25 s)` and `instrument feed silent for 1.98 s (limit 0.5 s)`.
+Rerun on a quieter machine, and report what happened.
+
+## Exit 3 at the end of a full or EV-10 rehearsal
+
+Full and EV-10 rehearsals often end like this, with exit 3:
 
 ```
-*** CUT POWER NOW. The stop was not acknowledged: tool still at 18 mm/s 0.25 s after the latch
+*** CUT POWER NOW. The stop was not acknowledged: tool still at 22 mm/s 0.25 s after the latch (the command stream ended)
 ```
 
-The kit acknowledges a stop when the tool is below 20 mm/s within 0.25 s. The method's known gap 7
-says that this is marginal against an instrument with 1 mm of noise, in simulation. Treat these as
-the watchdog doing its job:
+This is not machine load. It happened at load averages from 0.5 to 11 on 2 cores, with the tool at 18
+to 59 mm/s. The arm is still moving when the stream ends, for example mid-segment in a full run or on
+its way to the next waypoint in EV-10. The kit acknowledges a stop only if the tool slows below
+20 mm/s within 0.25 s. In one 10 s full rehearsal on a quiet machine, the tool moved at about 21 mm/s
+on either side of the last command, and fell to 9 mm/s only after 0.2 s. The method's known gap 7
+says this acknowledgement is marginal against an instrument with 1 mm of noise, in simulation.
+Shakedowns, at half speed and 15 % amplitude, ended with the stop acknowledged in the reference runs.
 
-- Rerun on a quieter machine.
-- Report what happened.
-- Never edit the kit's limits (`runner/limits.py`) to make a trip go away. They are deliberately not
-  settable from the command line.
+Report it as what the rehearsal showed: the stop wasn't acknowledged in time while the arm was
+moving. Before you hand over the hardware full-run or EV-10 command, tell the person that their
+rehearsal ended this way, and that the same CUT POWER banner may appear on the hardware run, where it
+means cutting power at the hardware stop now (see [hardware.md](hardware.md)). Rerunning on a
+quieter machine won't change it.
 
-A run that started and sent commands can still be packaged. Its commands are a prefix of the stream.
-On hardware, exit 3 means cut power at the hardware stop now (see [hardware.md](hardware.md)).
+In both cases, never edit the kit's limits (`runner/limits.py`) to make a trip or an exit 3 go away.
+They are deliberately not settable from the command line. A run that started and sent commands can
+still be packaged, because its commands are a prefix of the stream.

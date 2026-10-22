@@ -45,6 +45,21 @@ Those words are the person's to type. Never answer them with a pipe, `echo`, `ye
 here-document or a wrapper script, and never run these commands through a subprocess, a scheduled
 task or an MCP tool.
 
+## MCP and API motion tools
+
+The same rule covers a project's MCP or API motion tools, its own gated tools included, such as
+robot-md's `execute_capability` and `execute_task`. In robot-md 1.10.6 those write to the bus from
+inside the MCP server rather than through robot-md-gateway, and any non-empty `confirm_token`
+satisfies a gate. A token you pass is not a person at the machine.
+
+- **Allowed:** the server's read-only tools, and its stop (`estop`).
+- **Never, on real hardware:** a motion tool call, or clearing an e-stop (robot-md's `estop_clear`,
+  for example). A tool you can't classify counts as a motion tool.
+- **Instead:** write the call, or the equivalent CLI command, as text for the person at the machine,
+  after the checklist above.
+
+A project's own gate protocol adds to this rule. It never replaces it.
+
 ## The session, in order
 
 The lab guide's order (method §7.1) is the instrument setup and pre-run accuracy check, then the
@@ -57,6 +72,8 @@ Fill these placeholders in for the person:
 | `ID` | the LeRobot robot id, which names its calibration file |
 | `ENV`, `CS`, `KIT`, `URDF` | the envelope, command space, kit config and URDF |
 | `GATE` | the lab's gate as `module:factory` or `path/to/file.py:name` |
+| `FAR_TARGET` | the id of one of the command space's `far_targets` |
+| `SEED` | the full run's seed: an integer from 0 to 2^53, fixed before the run (see below) |
 
 ```sh
 # Read-only look at the arm: positions, torque, goal registers, calibration. Nothing moves.
@@ -86,6 +103,12 @@ be run ev03 --mode control --target FAR_TARGET --step-cap 1.0 --adapter lerobot 
 **The shakedown, then the full run.** Both go behind the gate. The shakedown runs 60 s at amplitude
 0.15 around the start pose, and the gate is asked for half speed. The full run sends the default
 600 s stream, and the kit refuses it without a completed shakedown on the same setup within 12 h.
+
+Before you hand over the full-run or EV-10 command, say whether its rehearsal ended with exit 3 and
+the CUT POWER banner. Full and EV-10 rehearsals often do: the arm is still moving when the stream
+ends, and the stop isn't acknowledged in time (method known gap 7; see
+[simulation.md](simulation.md)). Warn the person that the same banner may appear on the hardware
+run. There it means cut power at the hardware stop now.
 
 ```sh
 be run ev03 --mode shakedown --adapter lerobot --port PORT --id ID --wrapper GATE \
@@ -132,7 +155,9 @@ person's clone of the results repository. It never commits, pushes or opens a pu
 
 ## Never, for hardware
 
-- Run `be goto-start`, `be run`, `be doctor --port` or any script that opens the robot's port.
+- Run `be goto-start`, `be run`, `be doctor --port`, or any script, hardware-in-the-loop test suite,
+  `make` target or gateway client that opens the robot's port or drives its actuators.
+- Call an MCP or API motion tool, or clear an e-stop.
 - Add `--no-fk-tripwire-i-understand` or `--no-live-instrument-i-understand` to get past a refusal.
 - Edit the kit's safety numbers: `runner/limits.py`, the SO-101 joint-speed tripwire or the hold band
   in `adapters/feetech.py`. Changing them is a reviewed code change, not a command-line option.

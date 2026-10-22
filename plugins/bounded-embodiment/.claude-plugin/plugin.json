@@ -1,6 +1,6 @@
 {
   "name": "bounded-embodiment",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Bundles the bounded-embodiment skill: keeps AI-driven motion behind a gate, drafts envelopes for the integrator to decide, rehearses EV-03 and EV-10 in simulation with bounded-embodiment-kit (be doctor, be run, be verify), reads verdicts honestly, and prepares hardware commands for a person at the machine to run. A verdict is a finding about one run, never a certification.",
   "author": {
     "name": "Robot Registry Foundation",

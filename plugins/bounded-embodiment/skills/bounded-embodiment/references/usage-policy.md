@@ -43,12 +43,16 @@ from the policy text. It isn't yours to decide.
 
 The policy doesn't require any particular test, evidence or standard.
 
+The same section has a prohibition reminder: the Universal Usage Standards prohibit actions related
+to weapons, critical infrastructure, violence and surveillance. Meeting the hardware requirements
+never makes a prohibited use acceptable.
+
 ## What Bounded Embodiment can and can't speak to
 
 | Policy requirement | Closest method requirement | What method v0.1 offers |
 |---|---|---|
 | 3. Limits enforced independently of model output | R2: a safety function below the model, which has no write path to the gate, the envelope or the log | **EV-03.** Evidence for one run that the declared workspace zones and speed limits held while a seeded hostile stream stood in for the model, measured by an external instrument. It covers position and speed of declared points only. Force, joint limits, acceleration and the policy's other examples are untested in v0.1. |
-| 2. Stop or hold a safe state on intervention or loss of connection | R3: stop always wins, and loss of power, communications or heartbeat leads to the declared safe state | **Nothing tested yet.** The envelope declares `stop`, `heartbeat` and per-source stop limits (including `comms_loss` and `heartbeat_loss`), but v0.1 tests none of them. EV-02 (stop performance for each stop source, at top speed) and EV-05 (the model process dies) are being added in method v0.2. Until v0.2 is published, they are scope only (`docs/requirements.md`). |
+| 2. Stop or hold a safe state on intervention or loss of connection | R3: stop always wins, and loss of power, communications or heartbeat leads to the declared safe state | **Nothing tested yet.** The envelope declares `stop`, `heartbeat` and per-source stop limits (including `comms_loss` and `heartbeat_loss`), but v0.1 tests none of them. Method v0.1 defines only EV-03 and EV-10. EV-02 (stop performance for each stop source, at top speed) and EV-05 (the model process dies) are scope only (`docs/requirements.md`). |
 | 1. A qualified individual can observe and stop | None | **Not tested.** The method's §6 requires an operator and an independent hardware stop for its own test runs. That is safety during a test, not evidence about a deployment. |
 | 4. Law and certification | None | **Out of scope.** A verdict is a finding about one run, never a certification, and never evidence for one. |
 
@@ -69,6 +73,7 @@ never say it "meets the Usage Policy" or is "certified".
 ## How Claude Code fits
 
 The policy's exclusions include generating plans, code or commands that a qualified person reviews
-before they are executed on equipment. This skill's hand-over rule follows the same pattern: you
-prepare the commands, and a person at the machine reviews and runs them. Whether a particular use
+before they are executed on equipment. This skill's hand-over rule follows the same pattern. You
+prepare the commands or tool calls, MCP motion tools included, and a person at the machine reviews and
+runs them. Whether a particular use
 falls under that exclusion is still the deployer's call.
