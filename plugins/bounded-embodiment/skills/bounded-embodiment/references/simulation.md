@@ -11,7 +11,7 @@ The example envelopes, command spaces, SO-101 URDF and reference gates live in t
 in the wheels, so start from a clone. The kit needs Python 3.12 or later; core alone runs on 3.10.
 
 ```sh
-git clone https://github.com/RobotRegistryFoundation/bounded-embodiment
+git clone --branch kit-v0.1.2 https://github.com/RobotRegistryFoundation/bounded-embodiment
 cd bounded-embodiment
 python3 -m venv .venv && . .venv/bin/activate
 python -m pip install -e packages/core -e packages/kit -e examples/reference-gates
@@ -83,12 +83,15 @@ treats as the safe failure. Pipe it only when all of these hold:
   root:
 
   ```sh
-  git -C . diff --quiet kit-v0.1.2 -- examples/reference-gates && echo "reference gates unchanged"
-  python -c "import reference_gates; print(reference_gates.__file__)"   # must be inside this clone
+  git -C . diff --quiet kit-v0.1.2 -- packages examples/reference-gates \
+    && test -z "$(git -C . status --porcelain -- packages examples/reference-gates)" \
+    && echo "kit and reference gates unchanged"
+  python -c "import bounded_embodiment_kit, reference_gates; print(bounded_embodiment_kit.__file__); print(reference_gates.__file__)"   # both inside this clone
   ```
 
-  The first fails if anyone has edited a gate, or if the clone's `main` has moved past `kit-v0.1.2`
-  in `examples/reference-gates`. The second fails if Python would load a different `reference_gates`.
+  The first fails if anyone has edited or added a file in the kit, its simulators or the gates, or if
+  the clone's `main` has moved past `kit-v0.1.2` there. The second fails if Python would load the kit
+  or the gates from anywhere but this clone.
 - None of `--port`, `--id`, `--estop-cmd`, `--refuse-while-active` or `--adapter-class` appears.
   `--estop-cmd`, for example, runs a real program when a stop isn't acknowledged.
 

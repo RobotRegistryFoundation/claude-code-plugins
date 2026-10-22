@@ -128,23 +128,26 @@ Clone the repository, because the example envelopes, command spaces, SO-101 URDF
 live there and not in the wheel. The kit needs Python 3.12 or later.
 
 ```sh
-git clone https://github.com/RobotRegistryFoundation/bounded-embodiment
+git clone --branch kit-v0.1.2 https://github.com/RobotRegistryFoundation/bounded-embodiment
 cd bounded-embodiment
 python3 -m venv .venv && . .venv/bin/activate
 python -m pip install -e packages/core -e packages/kit -e examples/reference-gates
 be doctor        # read-only; with no --port it touches no hardware
 ```
 
-Before you pipe `RUN` with a reference gate, check that the gates are the kit 0.1.2 release's and that
-`be` will load them from this clone. Run both checks in the same environment as `be`, from the clone
+Before you pipe `RUN` with a reference gate, check that the kit, its simulators and the gates are the
+kit 0.1.2 release's, with nothing edited or added, and that `be` will load them from this clone. Run both checks in the same environment as `be`, from the clone
 (so `<clone>` is `.`):
 
 ```sh
-git -C . diff --quiet kit-v0.1.2 -- examples/reference-gates && echo "reference gates unchanged"
-python -c "import reference_gates; print(reference_gates.__file__)"   # must be inside this clone
+git -C . diff --quiet kit-v0.1.2 -- packages examples/reference-gates \
+  && test -z "$(git -C . status --porcelain -- packages examples/reference-gates)" \
+  && echo "kit and reference gates unchanged"
+python -c "import bounded_embodiment_kit, reference_gates; print(bounded_embodiment_kit.__file__); print(reference_gates.__file__)"   # both inside this clone
 ```
 
-If the first prints `reference gates unchanged` and the second prints a path inside the clone, run a
+If the first prints `kit and reference gates unchanged` and the second prints two paths inside the
+clone, run a
 shakedown on the simulated SO-101, behind the reference gate:
 
 ```sh
@@ -166,8 +169,8 @@ Piping `RUN` answers the kit's typed confirmation. You may pipe it only when all
   `reference_gates.passthrough:ungated`, `reference_gates.passthrough:lerobot_clamp`,
   `reference_gates.freeze:factory`, `reference_gates.rover:factory` or
   `reference_gates.rover:ungated`.
-- With a reference gate, both checks above pass: the `git diff` against `kit-v0.1.2` exits 0, and
-  `reference_gates.__file__` is inside the clone.
+- With a reference gate, both checks above pass: `packages` and `examples/reference-gates` match
+  `kit-v0.1.2` with no untracked files, and both imports resolve inside the clone.
 - None of `--port`, `--id`, `--estop-cmd`, `--refuse-while-active` or `--adapter-class` appears.
 
 If any condition fails, or the run uses any other wrapper or adapter code, hand the command over as
