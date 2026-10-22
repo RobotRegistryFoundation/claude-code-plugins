@@ -7,11 +7,15 @@ move physical hardware, or is asked to test a robot's limits, the skill holds it
 2. The integrator owns the envelope (workspace, speed and stop limits), and whether the limits are
    adequate is the integrator's call.
 3. Everything is rehearsed in simulation first, and a simulation proves nothing.
-4. Claude never starts motion on real hardware, by any route. That includes scripts and test suites,
-   the kit, and MCP or API tools, a project's own gated motion tools such as robot-md's
-   `execute_capability` included. It may use read-only tools and an e-stop, but it never calls a
-   motion tool or clears an e-stop. It prepares the exact commands or tool calls, and a person at the
-   machine runs them with a hand on the hardware stop.
+4. Claude never starts motion on real hardware, by any route. That includes:
+   - scripts and test suites, and the kit;
+   - starting a service that drives actuators;
+   - MCP or API tools, including a project's own gated motion tools such as robot-md's
+     `execute_capability`.
+
+   It may use read-only tools and a stop that halts or holds the machine. It never calls a motion
+   tool, even as a dry run, and never clears an e-stop. It prepares the exact commands or tool calls,
+   and a person at the machine runs them with a hand on the hardware stop.
 
 It works with the [Bounded Embodiment](https://github.com/RobotRegistryFoundation/bounded-embodiment)
 test method and its reference bench, `bounded-embodiment-kit`.

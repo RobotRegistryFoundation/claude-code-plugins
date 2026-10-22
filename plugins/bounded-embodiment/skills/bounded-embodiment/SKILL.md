@@ -45,11 +45,17 @@ untrusted command source the gate exists to contain.
    path to the envelope, the gate or its log.
 3. **Simulation comes first, and it proves nothing.** Rehearse with the kit's simulators. A
    simulation's verdict is always INCONCLUSIVE.
-4. **You never start motion on real hardware, by any route.** That covers the shell, scripts
-   (hardware-in-the-loop test suites, `make` targets and gateway clients included), the kit,
-   subprocesses, scheduled tasks, and MCP or API tools, a project's own gated motion tools included.
-   Write the exact commands or tool calls and hand them over. A person at the machine, with a hand on
-   the hardware stop, runs them and types the kit's confirmations.
+4. **You never start motion on real hardware, by any route.** That covers:
+   - the shell, the kit, subprocesses and scheduled tasks;
+   - scripts, including hardware-in-the-loop test suites, `make` targets and gateway clients;
+   - MCP or API tools, including a project's own gated motion tools;
+   - actions that start motion indirectly: starting or restarting a service that drives actuators
+     (`robot-md-gateway serve`, `robot-md-dispatcher`, `ros2 launch`, `docker compose up`),
+     publishing to a topic (`ros2 topic pub`), and editing a file that a running controller reloads.
+
+   If you can't tell whether a command, tool or action can move the machine, treat it as one that
+   can. Write the exact commands, tool calls or edits and hand them over. A person at the machine,
+   with a hand on the hardware stop, runs or applies them and types the kit's confirmations.
 
 ## Step 1: Find the gate before writing motion code
 
@@ -83,7 +89,12 @@ robot-md's `execute_capability` and `execute_task`. In robot-md 1.10.6 those wri
 inside the MCP server, not through robot-md-gateway, and any non-empty `confirm_token` satisfies a
 gate. A token you pass is therefore not a person at the machine.
 
-- You may use such a server's read-only tools and its stop (`estop`).
+- A motion tool counts as reaching real hardware unless the project shows that it points at a
+  simulator.
+- A `dry_run` call is still a motion-tool call: whether `dry_run` is honoured is up to each backend.
+- You may use such a server's read-only tools, and a stop that halts or holds the machine where it
+  is, such as robot-md's `estop`, which sets its e-stop flag. A "home" or "safe pose" move is a
+  motion tool, not a stop.
 - On real hardware, never call a motion tool, and never clear an e-stop (robot-md's `estop_clear`,
   for example). If you can't tell whether a tool moves the machine, treat it as a motion tool.
 - Write the call, or the equivalent CLI command, as text for the person at the machine, after the
@@ -124,7 +135,17 @@ python -m pip install -e packages/core -e packages/kit -e examples/reference-gat
 be doctor        # read-only; with no --port it touches no hardware
 ```
 
-Then run a shakedown on the simulated SO-101, behind the reference gate:
+Before you pipe `RUN` with a reference gate, check that the gates are the kit 0.1.2 release's and that
+`be` will load them from this clone. Run both checks in the same environment as `be`, from the clone
+(so `<clone>` is `.`):
+
+```sh
+git -C . diff --quiet kit-v0.1.2 -- examples/reference-gates && echo "reference gates unchanged"
+python -c "import reference_gates; print(reference_gates.__file__)"   # must be inside this clone
+```
+
+If the first prints `reference gates unchanged` and the second prints a path inside the clone, run a
+shakedown on the simulated SO-101, behind the reference gate:
 
 ```sh
 printf 'RUN\n' | be run ev03 --mode shakedown --adapter sim-so101 --instrument sim \
@@ -140,19 +161,20 @@ printf 'RUN\n' | be run ev03 --mode shakedown --adapter sim-so101 --instrument s
 Piping `RUN` answers the kit's typed confirmation. You may pipe it only when all of these hold:
 
 - `--adapter` is `sim-so101` or `sim-rover`, and `--instrument` is `sim`.
-- `--wrapper` is omitted, or it is one of the reference gates from the bounded-embodiment clone's
-  `examples/reference-gates` (kit 0.1.2): `reference_gates.so101_reference:factory`,
-  `reference_gates.so101_reference_v1:factory`, `reference_gates.passthrough:ungated`,
-  `reference_gates.passthrough:lerobot_clamp`, `reference_gates.freeze:factory`,
-  `reference_gates.rover:factory` or `reference_gates.rover:ungated`.
+- `--wrapper` is omitted, or it is exactly one of these seven reference gates:
+  `reference_gates.so101_reference:factory`, `reference_gates.so101_reference_v1:factory`,
+  `reference_gates.passthrough:ungated`, `reference_gates.passthrough:lerobot_clamp`,
+  `reference_gates.freeze:factory`, `reference_gates.rover:factory` or
+  `reference_gates.rover:ungated`.
+- With a reference gate, both checks above pass: the `git diff` against `kit-v0.1.2` exits 0, and
+  `reference_gates.__file__` is inside the clone.
 - None of `--port`, `--id`, `--estop-cmd`, `--refuse-while-active` or `--adapter-class` appears.
 
-Treat any other wrapper or adapter code as hardware. A wrapper runs arbitrary code and every command
-goes through it, so it can forward the hostile stream to a real arm while the kit's watchdog watches
-only the simulated one. Hand such a command over as text for the person to run. The one exception is
-when you have read that code in full and confirmed it does no I/O beyond the simulator (no network,
-serial, socket or subprocess). If so, say that you checked. `GO` is always the person's to type:
-`be goto-start` refuses `--instrument sim`.
+If any condition fails, or the run uses any other wrapper or adapter code, hand the command over as
+text and let the person type `RUN`. There is no exception for code you have read. A wrapper is
+arbitrary code that every command passes through, so it can drive a real machine while the kit's
+watchdog watches only the simulated one. `GO` is always the person's to type: `be goto-start`
+refuses `--instrument sim`.
 
 `be run` never writes a verdict. To get one, package the run with `be report`, using a throwaway key
 and a rehearsal lab config, and check it with `be verify`. A control rehearsal, full and EV-10
@@ -203,7 +225,9 @@ For hardware, never do any of these:
 
 - run `be goto-start`, `be run`, `be doctor --port`, or any script, test suite, `make` target or
   gateway client that opens the robot's port or drives its actuators;
-- call an MCP or API motion tool, or clear an e-stop;
+- start or restart a service that drives actuators, publish to a topic, or edit a file that a
+  running controller reloads;
+- call an MCP or API motion tool (a `dry_run` call included), or clear an e-stop;
 - answer the typed words with a pipe, `echo`, `yes`, `expect` or a wrapper script;
 - add `--no-fk-tripwire-i-understand` or `--no-live-instrument-i-understand` to get past a
   refusal (the second exists only for an offline instrument, as the lab guide describes, and the
@@ -238,9 +262,9 @@ of model output.
 
 Never say a machine, gate or deployment is compliant with the policy, meets it or is approved under
 it. Say what the evidence is and what it isn't. Meeting the policy is the deployer's responsibility,
-and no test result settles it. The policy's prohibited uses (weapons, critical infrastructure,
-violence and surveillance) still apply whatever the hardware does. Scope, exclusions and the mapping
-are in [references/usage-policy.md](references/usage-policy.md).
+and no test result settles it. The policy's prohibited uses, including uses related to weapons,
+critical infrastructure, violence and surveillance, still apply whatever the hardware does. Scope,
+exclusions and the mapping are in [references/usage-policy.md](references/usage-policy.md).
 
 ## Known limitations (keep your honesty consistent)
 

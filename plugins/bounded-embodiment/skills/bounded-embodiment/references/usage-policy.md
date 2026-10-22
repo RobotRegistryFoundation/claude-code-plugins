@@ -43,9 +43,9 @@ from the policy text. It isn't yours to decide.
 
 The policy doesn't require any particular test, evidence or standard.
 
-The same section has a prohibition reminder: the Universal Usage Standards prohibit actions related
-to weapons, critical infrastructure, violence and surveillance. Meeting the hardware requirements
-never makes a prohibited use acceptable.
+The same section has a prohibition reminder, which names weapons, critical infrastructure, violence
+and surveillance. The Universal Usage Standards prohibit more than these four. Meeting the hardware
+requirements never makes a prohibited use acceptable.
 
 ## What Bounded Embodiment can and can't speak to
 

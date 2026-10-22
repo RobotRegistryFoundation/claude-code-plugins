@@ -63,7 +63,7 @@ answers the first. The end of input then answers the second with "leave torque o
 treats as the safe failure. Pipe it only when all of these hold:
 
 - `--adapter` is `sim-so101` or `sim-rover`, and `--instrument` is `sim`.
-- `--wrapper` is omitted, or it is one of the reference gates from this clone's
+- `--wrapper` is omitted, or it is exactly one of the reference gates from this clone's
   `examples/reference-gates`, installed with `pip install -e examples/reference-gates`. At the
   `kit-v0.1.2` tag these are:
   - `reference_gates.so101_reference:factory` and `reference_gates.so101_reference_v1:factory`;
@@ -71,21 +71,40 @@ treats as the safe failure. Pipe it only when all of these hold:
   - `reference_gates.freeze:factory`;
   - `reference_gates.rover:factory` and `reference_gates.rover:ungated`.
 
-  At that tag their imports are the standard library's `json`, `pathlib`, `math`, `time` and
-  `collections.abc`, plus numpy and the kit. None of them is a network, serial or subprocess module.
-  They read the envelope, kit config and URDF files, and act only on the robot object they are
-  handed.
+  At that tag their imports are:
+  - the standard library's `json`, `pathlib`, `math`, `time` and `collections.abc`;
+  - numpy;
+  - core's `bounded_embodiment.envelope`;
+  - the kit's `bounded_embodiment_kit.kinematics`.
+
+  None of them opens a network, serial or subprocess channel. They read the envelope, kit config and
+  URDF files, and act only on the robot object they are handed.
+- With a reference gate, both of these pass, run in the same environment as `be` from the clone's
+  root:
+
+  ```sh
+  git -C . diff --quiet kit-v0.1.2 -- examples/reference-gates && echo "reference gates unchanged"
+  python -c "import reference_gates; print(reference_gates.__file__)"   # must be inside this clone
+  ```
+
+  The first fails if anyone has edited a gate, or if the clone's `main` has moved past `kit-v0.1.2`
+  in `examples/reference-gates`. The second fails if Python would load a different `reference_gates`.
 - None of `--port`, `--id`, `--estop-cmd`, `--refuse-while-active` or `--adapter-class` appears.
   `--estop-cmd`, for example, runs a real program when a stop isn't acknowledged.
 
-Any other wrapper or adapter code counts as hardware. A wrapper is arbitrary code that every command
-goes through. In a test for this skill, a short wrapper passed to a `sim-so101` shakedown forwarded
-all 150 hostile commands to a local network listener, and the run exited 0. The kit's start check and
-watchdog watch only the simulated arm, so the same wrapper pointed at a gateway would drive a real arm
-with no supervision. Hand such a command to the person as text, unless you have read the code in full
-and confirmed that it does no I/O beyond the simulator (no network, serial, socket or subprocess). If
-so, say that you checked. `GO` is never piped: `be goto-start` refuses `--instrument sim`, so it
-never qualifies.
+If any condition fails, or the run uses any other wrapper or adapter code, hand the command to the
+person as text and let them type `RUN`. There is no exception for code you have read. A wrapper is
+arbitrary code that every command goes through, and the kit's start check and watchdog watch only
+the simulated arm. Tests for this skill, each a `sim-so101` shakedown with `RUN` piped that exited 0,
+showed why:
+
+- a short wrapper forwarded all 150 hostile commands to a local network listener;
+- a wrapper that used only `os.open` and `os.write` wrote 150 pigpio-style servo lines
+  (`s 18 1591`, …) to a FIFO; pointed at pigpiod's `/dev/pigpio`, those are servo pulses;
+- `reference_gates.so101_reference:factory`, edited in place in the clone, forwarded all 150
+  commands, because the editable install makes edits live. The `git diff` check catches that.
+
+`GO` is never piped: `be goto-start` refuses `--instrument sim`, so it never qualifies.
 
 Every simulated run below passes `--ledger runs/sim-ledger.jsonl`, which keeps rehearsals out of the
 default shakedown ledger (`~/.local/state/bounded-embodiment/shakedown-ledger.jsonl`). A simulated
@@ -94,6 +113,9 @@ space, the kit config, the URDF and the adapter's config, and that config includ
 (`sim-so101` against `lerobot`), its port, its robot id and the gate (`--wrapper`).
 
 ## A shakedown behind the reference gate
+
+Run the two checks above first. This and every later recipe that names a reference gate depends on
+them.
 
 ```sh
 printf 'RUN\n' | be run ev03 --mode shakedown --adapter sim-so101 --instrument sim \

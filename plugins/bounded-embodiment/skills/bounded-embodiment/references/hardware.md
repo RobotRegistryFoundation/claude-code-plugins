@@ -52,9 +52,14 @@ robot-md's `execute_capability` and `execute_task`. In robot-md 1.10.6 those wri
 inside the MCP server rather than through robot-md-gateway, and any non-empty `confirm_token`
 satisfies a gate. A token you pass is not a person at the machine.
 
-- **Allowed:** the server's read-only tools, and its stop (`estop`).
+- **Real hardware by default.** A motion tool counts as reaching real hardware unless the project
+  shows that it points at a simulator.
+- **Allowed:** the server's read-only tools, and a stop that halts or holds the machine where it is,
+  such as robot-md's `estop`, which sets its e-stop flag. A "home" or "safe pose" move is a motion
+  tool, not a stop.
 - **Never, on real hardware:** a motion tool call, or clearing an e-stop (robot-md's `estop_clear`,
-  for example). A tool you can't classify counts as a motion tool.
+  for example). A `dry_run` call is still a motion-tool call, because whether `dry_run` is honoured
+  is up to each backend. A tool you can't classify counts as a motion tool.
 - **Instead:** write the call, or the equivalent CLI command, as text for the person at the machine,
   after the checklist above.
 
@@ -157,7 +162,11 @@ person's clone of the results repository. It never commits, pushes or opens a pu
 
 - Run `be goto-start`, `be run`, `be doctor --port`, or any script, hardware-in-the-loop test suite,
   `make` target or gateway client that opens the robot's port or drives its actuators.
-- Call an MCP or API motion tool, or clear an e-stop.
+- Start or restart a service that drives actuators (`robot-md-gateway serve`, `robot-md-dispatcher`,
+  `ros2 launch`, `docker compose up`), publish to a topic (`ros2 topic pub`), or edit a file that a
+  running controller reloads. Write the command or the edit out for the person instead. If you can't
+  tell whether a command or action can move the machine, treat it as one that can.
+- Call an MCP or API motion tool (a `dry_run` call included), or clear an e-stop.
 - Add `--no-fk-tripwire-i-understand` or `--no-live-instrument-i-understand` to get past a refusal.
 - Edit the kit's safety numbers: `runner/limits.py`, the SO-101 joint-speed tripwire or the hold band
   in `adapters/feetech.py`. Changing them is a reviewed code change, not a command-line option.
