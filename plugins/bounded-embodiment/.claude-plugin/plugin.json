@@ -8,6 +8,7 @@
   },
   "homepage": "https://github.com/RobotRegistryFoundation/bounded-embodiment",
   "repository": "https://github.com/RobotRegistryFoundation/claude-code-plugins",
+  "license": "Apache-2.0",
   "keywords": [
     "robotics",
     "embodied-ai",

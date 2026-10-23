@@ -91,3 +91,7 @@ simulation."* You can also invoke it directly with `/bounded-embodiment:bounded-
 `version` in `.claude-plugin/plugin.json` pins installed copies, so users stay on the cached copy
 until it changes. Bump it with every change to the skill. After a kit release, re-run the commands in
 `skills/bounded-embodiment/references/simulation.md` and update the tested-against versions.
+
+## License
+
+Apache-2.0. See [LICENSE](LICENSE).
