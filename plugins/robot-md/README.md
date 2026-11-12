@@ -30,7 +30,7 @@ Declaration doesn't enforce anything. Physical limits are meant to be enforced a
 
 ## Data
 
-The MCP server runs locally and sends nothing to the Robot Registry Foundation. Registry commands, which the `rrf-registry` skill runs only after you agree, publish a robot record at `rcan.dev/r/<rrn>` under CC0. See the [privacy policy](https://robotmd.dev/privacy/).
+The MCP server runs locally. It sends data to the Robot Registry Foundation only through its `spatial_eval_submit_to_rrf` tool, which uploads a signed spatial-eval score when you approve the call. Registry commands, which the `rrf-registry` skill runs only after you agree, publish a robot record at `rcan.dev/r/<rrn>` under CC0. See the [privacy policy](https://robotmd.dev/privacy/).
 
 ## Keeping copies in sync
 
