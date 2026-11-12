@@ -1,0 +1,6 @@
+{
+  "robot-md": {
+    "command": "robot-md",
+    "args": ["mcp"]
+  }
+}

@@ -9,12 +9,9 @@
   "plugins": [
     {
       "name": "robot-md",
-      "description": "Bundles the using-robot-md skill and auto-registers the robot-md-mcp server. Reads ROBOT.md, exposes capabilities/safety/body as MCP resources, surfaces validate/render tools.",
+      "description": "Connect a robot to Claude through its ROBOT.md: the using-robot-md, bounded-embodiment and rrf-registry skills, the enable-dispatch command, and the robot-md MCP server for manifest reads and gated motion.",
       "category": "development",
-      "source": {
-        "source": "url",
-        "url": "https://github.com/RobotRegistryFoundation/robot-md-mcp.git"
-      },
+      "source": "./plugins/robot-md",
       "homepage": "https://robotmd.dev"
     },
     {
