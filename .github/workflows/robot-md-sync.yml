@@ -1,0 +1,17 @@
+name: robot-md sync check
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "17 14 * * *"
+  workflow_dispatch:
+
+jobs:
+  sync-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Copies in plugins/robot-md match their canonical sources
+        run: scripts/sync-robot-md.sh --check

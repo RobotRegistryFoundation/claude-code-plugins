@@ -7,6 +7,12 @@ Claude Code plugin marketplace for the [robot-md](https://robotmd.dev) ecosystem
 Inside Claude Code (defaults to `--scope user` — the recommended choice):
 
 ```
+/plugin install robot-md --marketplace RobotRegistryFoundation/claude-code-plugins
+```
+
+On Claude Code before 2.1.275, add the marketplace first:
+
+```
 /plugin marketplace add RobotRegistryFoundation/claude-code-plugins
 /plugin install robot-md
 /reload-plugins
@@ -27,5 +33,5 @@ To add the Bounded Embodiment skill from the same marketplace:
 
 | Name | Source | What it does |
 |---|---|---|
-| [`robot-md`](https://github.com/RobotRegistryFoundation/robot-md-mcp) | `robot-md-mcp` | Bundles the `using-robot-md` skill and auto-registers the MCP server for a workspace's `ROBOT.md`. |
+| [`robot-md`](plugins/robot-md) | this repository | Connects a robot to Claude through its `ROBOT.md`. Bundles the `using-robot-md`, `bounded-embodiment` and `rrf-registry` skills, the `enable-dispatch` command, and the robot-md MCP server. Copies are kept in sync with their canonical sources by `scripts/sync-robot-md.sh` and CI. |
 | [`bounded-embodiment`](plugins/bounded-embodiment) | this repository | Bundles the `bounded-embodiment` skill. It keeps AI-driven motion behind a gate, drafts envelopes for the integrator to decide, rehearses EV-03 and EV-10 in simulation with [bounded-embodiment-kit](https://github.com/RobotRegistryFoundation/bounded-embodiment), and prepares hardware commands for a person at the machine to run. Method v0.1 is a draft for comment, and a verdict is never a certification. |
