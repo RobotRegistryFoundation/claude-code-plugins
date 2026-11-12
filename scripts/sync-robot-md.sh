@@ -16,6 +16,7 @@ pairs=(
   "$work/robot-md-mcp/skills/using-robot-md|$DEST/skills/using-robot-md"
   "$work/robot-md-mcp/commands/enable-dispatch.md|$DEST/commands/enable-dispatch.md"
   "$work/robot-md-mcp/.mcp.json|$DEST/.mcp.json"
+  "$work/robot-md-mcp/scripts/start-mcp-server.py|$DEST/scripts/start-mcp-server.py"
   "plugins/bounded-embodiment/skills/bounded-embodiment|$DEST/skills/bounded-embodiment"
 )
 
@@ -30,6 +31,7 @@ for pair in "${pairs[@]}"; do
     fi
   else
     rm -rf "$dst"
+    mkdir -p "$(dirname "$dst")"
     cp -r "$src" "$dst"
     echo "synced $dst"
   fi

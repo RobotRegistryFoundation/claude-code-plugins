@@ -8,7 +8,7 @@ The robot-md plugin connects a robot to Claude through the `ROBOT.md` at the roo
 | `bounded-embodiment` skill | Keeps AI-driven motion behind a gate, drafts envelopes, rehearses EV-03 and EV-10 in simulation, reads verdicts honestly | [plugins/bounded-embodiment](../bounded-embodiment/skills/bounded-embodiment) |
 | `rrf-registry` skill | Registers the robot, rotates and revokes keys, proves manufacturer identity, emits and submits EU AI Act evidence | this plugin |
 | `/robot-md:enable-dispatch` | Writes dispatcher config and bearer tokens without printing the token into the conversation | [robot-md-mcp](https://github.com/RobotRegistryFoundation/robot-md-mcp/tree/main/commands) |
-| `robot-md` MCP server | Manifest reads plus motion (`execute_task`, `execute_capability`, `vision_find`, `estop`), served by `robot-md mcp` | [robot-md](https://github.com/RobotRegistryFoundation/robot-md) (PyPI) |
+| `robot-md` MCP server | Manifest reads plus motion (`execute_task`, `execute_capability`, `vision_find`, `estop`). `scripts/start-mcp-server.py` finds your installed `robot-md` CLI and runs `robot-md mcp` | [robot-md](https://github.com/RobotRegistryFoundation/robot-md) (PyPI) |
 
 ## Install
 
@@ -34,4 +34,4 @@ The MCP server runs locally and sends nothing to the Robot Registry Foundation. 
 
 ## Keeping copies in sync
 
-The `using-robot-md`, `bounded-embodiment` and `enable-dispatch` files here are copies. Edit the canonical source, then run `scripts/sync-robot-md.sh` from the repository root. CI fails when a copy drifts.
+The `using-robot-md`, `bounded-embodiment` and `enable-dispatch` files, `.mcp.json` and `scripts/start-mcp-server.py` here are copies. Edit the canonical source, then run `scripts/sync-robot-md.sh` from the repository root. CI fails when a copy drifts.
