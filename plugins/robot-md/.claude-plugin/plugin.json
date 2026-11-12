@@ -1,7 +1,7 @@
 {
   "name": "robot-md",
   "displayName": "robot-md",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Connect a robot to Claude through its ROBOT.md: read capabilities and safety limits, drive it through the robot-md MCP server, keep AI-driven motion behind a gate and test its limits with Bounded Embodiment, and manage its identity, keys and EU AI Act evidence at the Robot Registry Foundation. Requires `pip install 'robot-md[hardware]'`.",
   "author": {
     "name": "Robot Registry Foundation",
