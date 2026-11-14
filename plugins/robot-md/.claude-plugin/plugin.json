@@ -2,7 +2,7 @@
   "name": "robot-md",
   "displayName": "robot-md",
   "version": "0.7.0",
-  "description": "Connect a robot to Claude through its ROBOT.md: read capabilities and safety limits, route any motion through robot-md-gateway, keep AI-driven motion behind a gate and test its limits with Bounded Embodiment, and manage its identity, keys and EU AI Act evidence at the Robot Registry Foundation. Requires robot-md 2.0.0 or newer (`pip install 'robot-md[hardware]>=2.0.0'`); the MCP server's launcher refuses an older robot-md.",
+  "description": "Connect a robot to Claude through its ROBOT.md: read capabilities and safety limits, route any motion through robot-md-gateway, keep AI-driven motion behind a gate and test its limits with Bounded Embodiment, and manage its identity, keys and EU AI Act evidence at the Robot Registry Foundation. Requires robot-md 2.0.1 or newer (`pip install 'robot-md[hardware]>=2.0.1'`); the MCP server's launcher refuses an older robot-md.",
   "author": {
     "name": "Robot Registry Foundation",
     "email": "craigm26@gmail.com",

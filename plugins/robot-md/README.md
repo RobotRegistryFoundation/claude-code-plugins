@@ -8,7 +8,7 @@ The robot-md plugin connects a robot to Claude through the `ROBOT.md` at the roo
 | `bounded-embodiment` skill | Keeps AI-driven motion behind a gate, drafts envelopes, rehearses EV-03 and EV-10 in simulation, reads verdicts honestly | [plugins/bounded-embodiment](../bounded-embodiment/skills/bounded-embodiment) |
 | `rrf-registry` skill | Registers the robot, rotates and revokes keys, proves manufacturer identity, emits and submits EU AI Act evidence | this plugin |
 | `/robot-md:enable-dispatch` | Writes dispatcher config and bearer tokens without printing the token into the conversation | [robot-md-mcp](https://github.com/RobotRegistryFoundation/robot-md-mcp/tree/main/commands) |
-| `robot-md` MCP server | Manifest reads, read-only perception (`vision_find`; the camera stays closed unless `ROBOT_MD_MCP_OPEN_CAMERA=1`), and motion tools (`execute_task`, `execute_capability`, `estop`) that send only to robot-md-gateway and refuse without one. `scripts/start-mcp-server.py` finds your installed `robot-md` CLI, refuses one older than 2.0.0, and runs `robot-md mcp` | [robot-md](https://github.com/RobotRegistryFoundation/robot-md) (PyPI) |
+| `robot-md` MCP server | Manifest reads, read-only perception (`vision_find`; the camera stays closed unless `ROBOT_MD_MCP_OPEN_CAMERA=1`), and motion tools (`execute_task`, `execute_capability`, `estop`) that send only to robot-md-gateway and refuse without one. `scripts/start-mcp-server.py` finds your installed `robot-md` CLI, refuses one older than 2.0.1, and runs `robot-md mcp` | [robot-md](https://github.com/RobotRegistryFoundation/robot-md) (PyPI) |
 
 ## Install
 
@@ -16,10 +16,10 @@ The robot-md plugin connects a robot to Claude through the `ROBOT.md` at the roo
 /plugin install robot-md --marketplace RobotRegistryFoundation/claude-code-plugins
 ```
 
-Then install the CLI the MCP server runs on. It needs robot-md 2.0.0 or newer: in robot-md 1.x, the MCP server's motion tools move the arm from inside the server process instead of sending to robot-md-gateway, so the launcher refuses to start them. If pip finds no 2.0.0, it isn't released yet.
+Then install the CLI the MCP server runs on. It needs robot-md 2.0.1 or newer, and the launcher refuses to start an older one. In robot-md 1.x, the MCP server's motion tools move the arm from inside the server process instead of sending to robot-md-gateway. robot-md 2.0.0 sends motion to the gateway, but its MCP server doesn't refuse a motion gated on a scope such as `destructive` or `system`, which is how the so-arm101 preset gates the arm. If pip finds no 2.0.1, it isn't released yet.
 
 ```bash
-python3 -m pip install --user 'robot-md[hardware]>=2.0.0'
+python3 -m pip install --user 'robot-md[hardware]>=2.0.1'
 ```
 
 Launch Claude Code from a directory with a `ROBOT.md` at its root. If you don't have one, ask Claude to set the robot up; the `using-robot-md` skill walks through `robot-md init`.
