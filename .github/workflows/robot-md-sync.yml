@@ -13,5 +13,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Copies in plugins/robot-md match their canonical sources
+      - name: Copies in plugins/robot-md-full and plugins/robot-md match their canonical sources
         run: scripts/sync-robot-md.sh --check

@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
-# Refresh the copied components of plugins/robot-md from their canonical sources.
-#   scripts/sync-robot-md.sh          copy canonical files into plugins/robot-md
+# Refresh the copied components of the robot-md plugins from their canonical sources:
+# plugins/robot-md-full (the marketplace plugin, which starts the MCP server) and plugins/robot-md (the plugin
+# directory's version: skills and commands only, no MCP server and no scripts).
+#   scripts/sync-robot-md.sh          copy canonical files into both
 #   scripts/sync-robot-md.sh --check  exit 1 if any copy differs (used by CI)
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
 MCP_REPO="${ROBOT_MD_MCP_REPO:-https://github.com/RobotRegistryFoundation/robot-md-mcp.git}"
-DEST=plugins/robot-md
+DEST=plugins/robot-md-full
+DIR=plugins/robot-md
 work="$(mktemp -d)"
 trap 'rm -rf "$work"' EXIT
 git clone --quiet --depth 1 "$MCP_REPO" "$work/robot-md-mcp"
@@ -18,6 +21,11 @@ pairs=(
   "$work/robot-md-mcp/.mcp.json|$DEST/.mcp.json"
   "$work/robot-md-mcp/scripts/start-mcp-server.py|$DEST/scripts/start-mcp-server.py"
   "plugins/bounded-embodiment/skills/bounded-embodiment|$DEST/skills/bounded-embodiment"
+  # The directory version: the same skills and the enable-dispatch command; rrf-registry's canonical copy is the full plugin's.
+  "$work/robot-md-mcp/skills/using-robot-md|$DIR/skills/using-robot-md"
+  "$work/robot-md-mcp/commands/enable-dispatch.md|$DIR/commands/enable-dispatch.md"
+  "plugins/bounded-embodiment/skills/bounded-embodiment|$DIR/skills/bounded-embodiment"
+  "$DEST/skills/rrf-registry|$DIR/skills/rrf-registry"
 )
 
 drift=0

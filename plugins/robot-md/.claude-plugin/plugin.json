@@ -1,8 +1,7 @@
 {
   "name": "robot-md",
-  "displayName": "robot-md",
-  "version": "0.7.0",
-  "description": "Connect a robot to Claude through its ROBOT.md: read capabilities and safety limits, route any motion through robot-md-gateway, keep AI-driven motion behind a gate and test its limits with Bounded Embodiment, and manage its identity, keys and EU AI Act evidence at the Robot Registry Foundation. Requires robot-md 2.0.1 or newer (`pip install 'robot-md[hardware]>=2.0.1'`); the MCP server's launcher refuses an older robot-md.",
+  "version": "0.8.0",
+  "description": "Connect a robot to Claude through its ROBOT.md: skills to read capabilities and safety limits, route motion through robot-md-gateway, keep AI-driven motion behind a gate and test its limits with Bounded Embodiment, and manage the robot's registry identity and EU AI Act evidence. This version ships no MCP server; /robot-md:connect-server says how to add the robot-md server yourself.",
   "author": {
     "name": "Robot Registry Foundation",
     "email": "craigm26@gmail.com",
@@ -11,18 +10,7 @@
   "homepage": "https://robotmd.dev",
   "repository": "https://github.com/RobotRegistryFoundation/claude-code-plugins",
   "license": "Apache-2.0",
-  "keywords": [
-    "robotics",
-    "robot-md",
-    "mcp",
-    "embodied-ai",
-    "safety",
-    "bounded-embodiment",
-    "robot-registry",
-    "eu-ai-act"
-  ],
+  "keywords": ["robotics", "robot-md", "embodied-ai", "safety", "bounded-embodiment", "robot-registry", "eu-ai-act"],
   "icon": "./.claude-plugin/icon.png",
-  "documentationUrl": "https://docs.robotmd.dev/mcp/",
-  "supportUrl": "https://github.com/RobotRegistryFoundation/claude-code-plugins/issues",
   "privacyPolicyUrl": "https://robotmd.dev/privacy/"
 }
