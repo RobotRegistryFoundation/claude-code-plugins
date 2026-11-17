@@ -11,7 +11,7 @@
       "name": "robot-md",
       "description": "Connect a robot to Claude through its ROBOT.md: the using-robot-md, bounded-embodiment and rrf-registry skills, the enable-dispatch command, and the robot-md MCP server for manifest reads and gated motion.",
       "category": "development",
-      "source": "./plugins/robot-md",
+      "source": "./plugins/robot-md-full",
       "homepage": "https://robotmd.dev"
     },
     {
