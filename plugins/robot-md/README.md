@@ -12,7 +12,7 @@ The robot-md plugin connects a robot to Claude through the `ROBOT.md` at the roo
 
 ## The MCP server
 
-The skills expect the robot-md MCP server (manifest reads, read-only perception, and motion tools that send only to robot-md-gateway). It runs on your machine, next to the robot, so this version doesn't start it. Add it yourself as `/robot-md:connect-server` describes; installation is at https://docs.robotmd.dev/mcp/.
+The skills expect the robot-md MCP server (manifest reads, read-only perception, and motion tools that send only to robot-md-gateway). It runs on your machine, next to the robot, so this version doesn't start it. Add it yourself as `/robot-md:connect-server` describes; installation is at https://docs.robotmd.dev/mcp/#two-servers.
 
 The full plugin, which starts the server for you and refuses a robot-md older than 2.0.1, is in the Robot Registry Foundation's marketplace: `/plugin marketplace add RobotRegistryFoundation/claude-code-plugins`, then `/plugin install robot-md@robotregistryfoundation`.
 

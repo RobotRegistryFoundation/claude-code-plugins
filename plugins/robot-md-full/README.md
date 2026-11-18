@@ -16,7 +16,7 @@ The robot-md plugin connects a robot to Claude through the `ROBOT.md` at the roo
 /plugin install robot-md --marketplace RobotRegistryFoundation/claude-code-plugins
 ```
 
-Then install the CLI the MCP server runs on. It needs robot-md 2.0.1 or newer, and the launcher refuses to start an older one. In robot-md 1.x, the MCP server's motion tools move the arm from inside the server process instead of sending to robot-md-gateway. robot-md 2.0.0 sends motion to the gateway, but its MCP server doesn't refuse a motion gated on a scope such as `destructive` or `system`, which is how the so-arm101 preset gates the arm. If pip finds no 2.0.1, it isn't released yet.
+Then install the CLI the MCP server runs on. It needs robot-md 2.0.1 or newer, and the launcher refuses to start an older one. In robot-md 1.x, the MCP server's motion tools move the arm from inside the server process instead of sending to robot-md-gateway. robot-md 2.0.0 sends motion to the gateway, but its MCP server doesn't refuse a motion gated on a scope such as `destructive` or `system`, which is how the so-arm101 preset gates the arm.
 
 ```bash
 python3 -m pip install --user 'robot-md[hardware]>=2.0.1'

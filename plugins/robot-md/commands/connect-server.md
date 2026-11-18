@@ -7,7 +7,7 @@ This plugin ships the robot-md skills and commands but not the MCP server: the s
 
 Tell the user, in this order:
 
-1. The server needs the robot-md CLI, version 2.0.1 or newer. Installation is described at https://docs.robotmd.dev/mcp/. Older versions send motion differently and their gate doesn't refuse motion that needs a person, so don't use one.
+1. The server needs the robot-md CLI, version 2.0.1 or newer; https://docs.robotmd.dev/mcp/#two-servers says how to install it and why the version matters. Older versions send motion differently and their gate doesn't refuse motion that needs a person, so don't use one. That page's other server, `robot-md-mcp` from npm, is read-only and has no motion tools; it isn't the one these skills expect.
 2. Once it is installed, they add the server to Claude Code from the folder that holds the robot's `ROBOT.md`:
    ```
    claude mcp add robot-md -- robot-md mcp
