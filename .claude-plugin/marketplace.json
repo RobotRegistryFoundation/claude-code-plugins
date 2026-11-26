@@ -8,6 +8,20 @@
   },
   "plugins": [
     {
+      "name": "graft-robotics",
+      "description": "Graft Robotics MCP App & Workbench: pair Claude safely with physical arms, CNC cobots, and humanoids. Includes multi-sensor LAN LiDAR mesh collision physics (MuJoCo 4.0), material crush/slip/payload mechanics, progressive L0-L3 Trust Ladder, and RFC 8785 bounded-embodiment verification.",
+      "author": {
+        "name": "Craig Merry"
+      },
+      "category": "development",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/craigm26/antigravity-plugins.git",
+        "path": "plugins/graft-robotics"
+      },
+      "homepage": "https://graftrobotics.ai"
+    },
+    {
       "name": "robot-md",
       "description": "Connect a robot to Claude through its ROBOT.md: the using-robot-md, bounded-embodiment and rrf-registry skills, the enable-dispatch command, and the robot-md MCP server for manifest reads and gated motion.",
       "category": "development",
