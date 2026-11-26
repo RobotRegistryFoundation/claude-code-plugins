@@ -9,7 +9,8 @@
   "plugins": [
     {
       "name": "graft-robotics",
-      "description": "Graft Robotics v0.4.0 MCP App & Workbench: pair Claude safely with physical arms, CNC cobots, and humanoids. Uses the full Anthropic plugin stack — interactive MCP App, MCP Form Elicitations (ctx.elicit), 5 Playbooks (MCP Prompts + slash commands), 5 live Resources, PreToolUse safety hooks — plus Rust graft-core + MuJoCo 4.0.1 LAN LiDAR mesh collision physics, Semantic-to-Deterministic Ratchet, material crush/slip mechanics, progressive L0-L3 Trust Ladder, and RFC 8785 bounded-embodiment verification.",
+      "version": "0.4.1",
+      "description": "Graft Robotics v0.4.1 MCP App & Workbench (15 MCP tools): pair Claude safely with physical arms, CNC cobots, and humanoids. Uses the full Anthropic plugin stack — interactive MCP App, 4 Form Elicitations (ctx.elicit), 6 Playbooks (MCP Prompts + slash commands incl. /remote-shop-onboarding), 5 live Resources, PreToolUse safety hooks — plus 6-family Hand HAL, Rust graft-core + MuJoCo 4.0.1 LAN LiDAR mesh collision physics, Semantic-to-Deterministic Ratchet, material crush/slip mechanics, progressive L0-L3 Trust Ladder, RoboCurve SET-Sim rehearsal (graft_run_set_benchmark), remote onboarding kit (graft_generate_onboarding_kit), and RFC 8785 bounded-embodiment verification.",
       "author": {
         "name": "Craig Merry"
       },
