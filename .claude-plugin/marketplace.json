@@ -10,7 +10,7 @@
     {
       "name": "graft-robotics",
       "version": "0.5.0",
-      "description": "Graft Robotics v0.5.0 MCP App & Workbench (19 MCP tools, 7 Playbooks, 4 Form Elicitations, 5 live Resources): pair Claude Code, Antigravity, Codex CLI, Gemini CLI, Apple Silicon MLX, or local Gemma 4 safely with physical robots. Includes ROS 2 Pre-Flight Launch Bundle generator (graft_ros2_generate_bundle), opt-in Cloudflare D1 Hosted Fleet Vault status (graft_vault_status, zero phone-home when unset), 6-client Agent Connect (graft_connect_agent), 1-click ISO 10218:2025 & EU 2023/1230 Compliance Dossier ZIP (graft_generate_compliance_pack, 0 private keys), /ros2-compliance-audit & /remote-shop-onboarding playbooks, live Wedge A-Upmarket Workbench side pane, 6-family Hand HAL, Rust graft-core + MuJoCo 4.0.1 physics, Semantic-to-Deterministic Ratchet, and fail-closed L0-L3 Trust Ladder.",
+      "description": "Graft Robotics v0.5.0 deterministic ROS 2 pre-flight boundary, ISO 10218:2025 / EU 2023/1230 compliance suite, and interactive Workbench MCP App for Claude Code, Antigravity, Codex, Gemini, Apple MLX, and local Gemma 4. Includes 19 MCP tools, 7 playbooks (incl. /ros2-compliance-audit & /remote-shop-onboarding), 4 fail-closed form elicitations, 5 live resources, 6-family Hand HAL, and Rust graft-core + MuJoCo 4.0.1 physics.",
       "author": {
         "name": "Craig Merry"
       },
